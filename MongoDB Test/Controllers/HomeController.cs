@@ -7,18 +7,13 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Threading.Tasks;
+using MongoDB_Test.App_Start;
 
 namespace MongoDB_Test.Controllers
 {
     public class HomeController : Controller
     {
-        public IMongoDatabase database;
-        public MongoClient client;
-        public HomeController()
-        {
-            client = new MongoClient(Settings.Default.MongoDBConnection);
-            database = client.GetDatabase(Settings.Default.MongoFileDB);
-        }
+        MongoDBContext mongoContext = new MongoDBContext();
         public async Task<ActionResult> Index()
         {
 //            var document = new BsonDocument
@@ -55,7 +50,7 @@ namespace MongoDB_Test.Controllers
 
 //            var collection = database.GetCollection<BsonDocument>("restaurants");
 //            await collection.InsertOneAsync(document);
-            var collection = database.GetCollection<BsonDocument>("restaurants");
+            var collection = mongoContext.Database.GetCollection<BsonDocument>("restaurants");
             var filter = new BsonDocument();
             var count = 0;
             
