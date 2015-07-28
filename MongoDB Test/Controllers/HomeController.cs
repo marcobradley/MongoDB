@@ -1,5 +1,7 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Bson;
+using MongoDB.Driver.Builders;
+using MongoDB.Driver.GridFS;
 using MongoDB_Test.Properties;
 using System;
 using System.Collections.Generic;
@@ -14,7 +16,7 @@ namespace MongoDB_Test.Controllers
     public class HomeController : Controller
     {
         MongoDBContext mongoContext = new MongoDBContext();
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
 //            var document = new BsonDocument
 //{
@@ -53,8 +55,8 @@ namespace MongoDB_Test.Controllers
             var collection = mongoContext.Database.GetCollection<BsonDocument>("restaurants");
             var filter = new BsonDocument();
             var count = 0;
-            
-            var result = await collection.Find(filter).ToListAsync();
+
+            var result = collection.FindAll().ToList();
             //using (var cursor = await collection.FindAsync(filter))
             //{
                 
@@ -84,6 +86,22 @@ namespace MongoDB_Test.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        public ActionResult AttachFile()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AttachFile(HttpPostedFileBase file)        
+        {
+            var options = new MongoGridFSCreateOptions
+            {
+                ContentType = file.ContentType
+            };
+            var fileInfo = mongoContext.Database.GridFS.Upload(file.InputStream, file.FileName, options);
+            return Json(fileInfo, JsonRequestBehavior.AllowGet);
         }
     }
 }
