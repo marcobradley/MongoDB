@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using MongoDB_Test.Models;
 
 namespace MongoDB_Test.App_Start
 {
@@ -20,5 +21,14 @@ namespace MongoDB_Test.App_Start
             MongoServer server = client.GetServer();
             Database = server.GetDatabase("restaurants");           
         }
+
+        public MongoCollection<FileUserModel> FileUsers{
+            get
+            {
+                return Database.GetCollection<FileUserModel>("FileUsers");
+            }
+        }
+
+    
     }
 }

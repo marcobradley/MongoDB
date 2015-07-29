@@ -1,17 +1,27 @@
-﻿using System;
+﻿using MongoDB_Test.Models;
+using MongoDB.Driver;
+using MongoDB.Bson;
+using MongoDB.Driver.Builders;
+using MongoDB.Driver.GridFS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using MongoDB_Test.App_Start;
+using AutoMapper;
 
 namespace MongoDB_Test.Controllers
 {
     public class MongoController : Controller
     {
+        public readonly MongoDBContext Context = new MongoDBContext();
+
         // GET: Mongo
         public ActionResult Index()
         {
-            return View();
+            var fileUsers = Context.FileUsers.FindAll();
+            return View(fileUsers);
         }
 
         // GET: Mongo/Details/5
@@ -21,19 +31,20 @@ namespace MongoDB_Test.Controllers
         }
 
         // GET: Mongo/Create
-        public ActionResult Create()
+        public ActionResult CreateFileUser()
         {
-            return View();
+            FileUser user = new FileUser();
+            return View(user);
         }
 
         // POST: Mongo/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult CreateFileUser(FileUser model)
         {
             try
             {
-                // TODO: Add insert logic here
-
+                var fileUser = new FileUserModel(model);
+                Context.FileUsers.Insert(fileUser);
                 return RedirectToAction("Index");
             }
             catch
